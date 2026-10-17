@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://dapeng3369-jpg.github.io/jiaxing-kezhang/sitemap.xml
