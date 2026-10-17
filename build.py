@@ -125,6 +125,15 @@ td.price span{font-size:13px;font-weight:600;color:var(--ink-3);margin-left:2px}
   color:#fff;display:grid;place-items:center;font-size:13px;font-weight:700;
 }
 
+.u-list{list-style:none;margin-top:24px;display:grid;gap:0}
+.u-list li{display:grid;grid-template-columns:110px 1fr;gap:18px;padding:16px 0;border-bottom:1px solid var(--line)}
+.u-list li:first-child{padding-top:0}
+.u-list li:last-child{border-bottom:none}
+.u-date{font-size:13px;color:var(--red);font-weight:700;font-variant-numeric:tabular-nums;padding-top:2px}
+.u-body b{font-size:16px}
+.u-body p{color:var(--ink-2);font-size:14.5px;margin-top:4px}
+@media (max-width:860px){.u-list li{grid-template-columns:1fr;gap:4px}}
+
 .disclaimer{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--gold);border-radius:var(--radius);padding:22px 24px}
 .disclaimer h3{font-size:15px;font-weight:700;margin-bottom:8px}
 .disclaimer p{font-size:13.5px;color:var(--ink-2);margin-top:6px}
@@ -219,6 +228,25 @@ def render():
         f'<span class="dist-label">{esc(f["district"])}</span>'
         f'<h3><span class="q-mark">Q</span><span>{esc(f["q"])}</span></h3>'
         f'<p>{esc(f["a"])}</p></article>' for f in c["faqs"])
+
+    updates = sorted(c.get("updates", []), key=lambda u: u["date"], reverse=True)
+    updates_html = "\n".join(
+        f'<li><span class="u-date">{esc(u["date"])}</span>'
+        f'<div class="u-body"><b>{esc(u["title"])}</b><p>{esc(u["text"])}</p></div></li>'
+        for u in updates)
+    updates_section = ""
+    if updates_html:
+        updates_section = f"""
+<section id="updates">
+  <div class="wrap">
+    <h2><span class="num">05</span>服务动态</h2>
+    <p class="lede">嘉兴各区县公安备案刻章的材料、流程与网点变化，按日期更新。</p>
+    <ul class="u-list">
+{updates_html}
+    </ul>
+  </div>
+</section>
+"""
 
     area_served = json.dumps(
         [{"@type": "AdministrativeArea", "name": "嘉兴市" + d["name"]} for d in c["districts"]],
@@ -378,6 +406,7 @@ def render():
   </div>
 </section>
 
+{updates_section}
 <section id="contact">
   <div class="wrap">
     <div class="contact">
