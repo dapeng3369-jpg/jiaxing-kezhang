@@ -3,3 +3,6 @@ crop_*.png
 live.html
 deploy.log
 _pages.json
+.gh_tmp_*.json
+.local_tree.txt
+.remote_tree.txt

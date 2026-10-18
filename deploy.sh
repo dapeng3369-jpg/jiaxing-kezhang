@@ -19,11 +19,25 @@ for p in 7897 7890 10808 10809; do
 done
 
 GIT="git -c http.https://github.com.proxy=${PX} -c https.https://github.com.proxy=${PX}"
+
+# 历史对齐：只在不同提交历史但内容完全一致时才把本地对齐到远端（API 通道推送过会留下此状态）
+if $GIT fetch origin main --quiet 2>/dev/null; then
+  if ! git merge-base --is-ancestor origin/main HEAD 2>/dev/null; then
+    if [ "$(git rev-parse origin/main^{tree})" = "$(git rev-parse HEAD^{tree})" ]; then
+      git reset --hard origin/main >/dev/null && echo "history realigned to origin/main (content identical)"
+    fi
+  fi
+fi
+
 $GIT add -A
 if $GIT diff --cached --quiet; then
   echo "no changes to publish"
   exit 0
 fi
 $GIT -c user.name="Hermes Bot" -c user.email="bot@local" commit -m "$MSG"
-$GIT push origin main
-echo "pushed: $MSG"
+if $GIT push origin main; then
+  echo "pushed: $MSG"
+else
+  echo "git push failed (github.com unreachable) -> fallback to api.github.com"
+  bash ./push_api.sh "$MSG"
+fi
