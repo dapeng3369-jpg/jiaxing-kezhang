@@ -1,4 +1,4 @@
 User-agent: *
-Allow: /
+Disallow: /
 
-Sitemap: https://dapeng3369-jpg.github.io/jiaxing-kezhang/sitemap.xml
+# 本仓库仅保留旧链接跳转页，内容已迁移至 https://dapeng3369-jpg.github.io/
